@@ -1,30 +1,39 @@
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </nav>
-  <router-view/>
+  <div>
+    <router-view />
+    <FooterMusic v-if="showFooterMusic" />
+  </div>
 </template>
 
-<style lang="less">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+import FooterMusic from '@/components/item/FooterMusic.vue'
 
-nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
+export default {
+  components: {
+    FooterMusic
+  },
+  computed: {
+    showFooterMusic() {
+      const route = this.$route
+      return route.meta && route.meta.showFooterMusic
     }
   }
+}
+</script>
+<style lang="less">
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.icon {
+  width: 0.5rem;
+  height: 0.5rem;
+}
+a {
+  color: black;
+}
+div {
+  font-family: "SmileySans"; //使用字体
 }
 </style>
