@@ -41,32 +41,20 @@ export default {
             alert("登录成功");
             console.log(response);
             console.log(response.data.cookie);
-            // const cookies = {};
-            // const cookiePairs = response.data.cookie.split(";");
-
-            // cookiePairs.forEach((pair) => {
-            //   const trimmedPair = pair.trim();
-            //   const splitIndex = trimmedPair.indexOf("=");
-            //   const key = trimmedPair.substring(0, splitIndex);
-            //   const value = trimmedPair.substring(splitIndex + 1);
-            //   cookies[key] = value;
-            //   Cookies.set(key,value);
-            // });
-            Cookies.set("cookie", response.data.cookie);
+            const cookies = {};
             const cookiePairs = response.data.cookie.split(";");
+
             cookiePairs.forEach((pair) => {
               const trimmedPair = pair.trim();
               const splitIndex = trimmedPair.indexOf("=");
               const key = trimmedPair.substring(0, splitIndex);
               const value = trimmedPair.substring(splitIndex + 1);
-              document.cookie = `${key}=${value}`;
+              cookies[key] = value;
+              Cookies.set(key,value);
             });
-            // console.log(cookies);
-            // Cookies.set('user', cookies.MUSIC_U);
+            Cookies.set("cookie", response.data.cookie);
             console.log(Cookies.get());
             console.log(document.cookie);
-            // console.log(Cookies.get("user"));
-            // console.log(JSON.parse(Cookies.get("user")));
 
             this.$router.go(-1);
           }

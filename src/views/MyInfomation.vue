@@ -36,11 +36,11 @@ import { getUserInfo, getLikeList, getMusicUrl,getHeartLoveModel,getUserDetail }
 export default {
   name: "myInfomation",
   created: async function () {
-    if (Cookies.get("user") === null) {
+    if (Cookies.get("MUSIC_A_T") === undefined) {
       console.log("未登录");
+      console.log(Cookies.get())
       this.$router.push("login");
     } else {
-      this.$router.push("login");
       this.userInfo = await getUserInfo();
       this.likeMusicList = await getLikeList(this.userInfo.data.profile.userId);
       console.log(this.likeMusicList);
