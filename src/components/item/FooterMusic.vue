@@ -15,11 +15,10 @@
           :detailShow="detailShow"
           :lyricList="lyricList"
           :addDuration="addDuration"
-          style="z-index: 2;"
+          style="z-index: 2"
+          @close-popup="closePopup"
         />
 
-        <!-- v-model:currentTime="currentTime"
-          v-model:duration="this.$refs.audio.duration" -->
       </van-popup>
       <div>
         <p>{{ playList[playListIndex].name }}</p>
@@ -33,9 +32,59 @@
       <svg class="icon" aria-hidden="true" v-else @click="play()">
         <use xlink:href="#icon-zanting"></use>
       </svg>
-      <svg class="icon" aria-hidden="true">
-        <use xlink:href="#icon-a-24gf-playlistMusic2"></use>
-      </svg>
+      <div class="liebiao" @click.stop="">
+        <van-popover
+          v-model:show="showPopover"
+          placement="top-end"
+          class="tanChu"
+          style="
+            width: 7rem;
+            height: 50vh;
+            background: rgba(255, 255, 255, 0.7);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(8px);
+          "
+        >
+          <div
+            class="itemList"
+            style="width: 7rem; height: 50vh; overflow-y: auto"
+          >
+            <div
+              class="item"
+              v-for="(item, i) in playList"
+              :key="i"
+              style="
+                width: 7rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              "
+            >
+              <div
+                class="itemLeft"
+                @click.stop="playMusic(i)"
+                style="width: 85%; display: flex; justify-content: space-around"
+              >
+                <span class="leftSpan" style="al">{{ i + 1 }}</span>
+                <p style="width: 90%">{{ item.name }}</p>
+              </div>
+              <div class="itemRight">
+                <svg class="icon bofang" aria-hidden="true" v-if="item.mv != 0">
+                  <use xlink:href="#icon-a-24gl-playSquare"></use>
+                </svg>
+                <svg class="icon liebiao" aria-hidden="true">
+                  <use xlink:href="#icon-a-31liebiao"></use>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <template #reference>
+            <svg class="icon" aria-hidden="true" style="fill: black">
+              <use xlink:href="#icon-a-31liebiao"></use>
+            </svg>
+          </template>
+        </van-popover>
+      </div>
     </div>
     <audio
       ref="audio"
@@ -60,20 +109,22 @@ export default {
   },
   created: async function () {
     var time = new Date();
-    let res = await getMusicLyric(this.playList[this.playListIndex].id,time);
+    let res = await getMusicLyric(this.playList[this.playListIndex].id, time);
     this.lyricList = res.data;
   },
   methods: {
     play: function () {
       //判断音乐是否播放
       if (this.$refs.audio.paused) {
+        this.updateIsbtnShow(false);
         this.$refs.audio.play();
         console.log("播放");
-        this.updateIsbtnShow(false);
+    
       } else {
+        this.updateIsbtnShow(true);
         this.$refs.audio.pause();
         console.log("暂停");
-        this.updateIsbtnShow(true);
+
       }
     },
     addDuration: function () {
@@ -94,6 +145,9 @@ export default {
     getLyric: async function () {
       let res = await getMusicLyric(this.playList[this.playListIndex].id);
       this.lyricList = res.data;
+    },
+    closePopup: function(){
+      this.detailShow = false;
     },
     ...mapMutations(["updateIsbtnShow", "updateDuration", "updateCurrentTime"]),
   },
@@ -149,13 +203,56 @@ export default {
   }
   .footRight {
     width: 20%;
-    height: 100%;
+    height: 70%;
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: last baseline;
+    // align-items: center;
     .icon {
       height: 30px;
       width: 30px;
+    }
+    .liebiao {
+      svg {
+        fill: black;
+      }
+      .itemList {
+        width: 80vw;
+        .item {
+          width: 80vw;
+          height: 1.4rem;
+          // top: 40%;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          .itemLeft {
+            width: 70%;
+            height: 100%;
+            p {
+              width: 25%;
+            }
+          }
+          .itemRight {
+            width: 20%;
+            height: 100%;
+            display: flex;
+            // justify-content: space-between;
+            align-items: center;
+            position: relative;
+            .icon {
+              fill: #999;
+            }
+            .bofang {
+              position: absolute;
+              left: 0;
+            }
+            .liebiao {
+              position: absolute;
+              right: 0;
+            }
+          }
+        }
+      }
     }
   }
 }

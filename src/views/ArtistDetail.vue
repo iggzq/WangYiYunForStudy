@@ -2,29 +2,22 @@
   <div class="main" v-if="artistDeatil != null">
     <div
       class="topItemLeft"
+      id="topItemLeft"
       style="
         width: 100%;
         display: flex;
         align-items: center;
         height: 20px;
-        background-color: white;
+        background-color: rgba(245, 248, 246, 1);
+        background-color: transparent;
         position: fixed;
-
         z-index: 10;
       "
     >
       <svg class="icon" aria-hidden="true" @click="$router.go(-1)">
         <use xlink:href="#icon-fanhui"></use>
       </svg>
-      <span
-        style="
-          width: 100%;
-          display: flex;
-          justify-content: space-evenly;
-          font-size: large;
-        "
-        >歌手详情</span
-      >
+      <span id="topText" style="width: 100%; display: none">歌手详情</span>
     </div>
     <div class="contentTop">
       <img :src="artistDeatil.artist.cover" class="topBackground" />
@@ -83,9 +76,14 @@ export default {
   },
   created: async function () {
     this.artist = JSON.parse(this.$route.query.artist);
+    console.log(await getArtistDetail(this.artist.id));
     this.artistDeatil = (await getArtistDetail(this.artist.id)).data.data;
     this.musicList = (await getArtistTopMusic(this.artist.id)).data.songs;
     console.log(this.musicList);
+  },
+  beforeRouteLeave(to, from, next) {
+    window.removeEventListener("scroll", this.handleScroll);
+    next();
   },
   methods: {
     playMusic: function (item) {
@@ -97,11 +95,42 @@ export default {
       this.updatePlayIndex(this.playList.length - 1);
       // this.updatePlayIndex(num + 1);
     },
+    goBack() {
+      this.$destroy();
+      this.$route.go(-1);
+    },
+    handleScroll() {
+      var scrollTop =
+        document.documentElement.scrollTop || document.body.scrollTop;
+      var windowHeight = window.innerHeight;
+      var threshold = windowHeight * 0.25; // 页面大小的25%
+
+      if (scrollTop >= threshold) {
+        // 顶部不透明
+        document.getElementById("topItemLeft").style.backgroundColor =
+          "rgba(245, 248, 246, 1)";
+        document.getElementById("topText").style.display = "flex";
+        document.getElementById("topText").style.fontSize = "large";
+        document.getElementById("topText").style.justifyContent =
+          "space-evenly";
+      } else {
+        // 顶部透明
+        document.getElementById("topText").style.display = "none";
+        document.getElementById("topItemLeft").style.backgroundColor =
+          "rgba(0, 0, 0, 0)";
+      }
+    },
 
     ...mapMutations(["updateAllPlayList", "updatePlayList", "updatePlayIndex"]),
   },
   computed: {
     ...mapState(["playListIndex", "playList"]),
+  },
+  mounted() {
+    window.addEventListener("scroll", this.handleScroll);
+  },
+  beforeDestroy() {
+    window.removeEventListener("scroll", this.handleScroll);
   },
 };
 </script>

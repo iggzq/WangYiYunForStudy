@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory,createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHistory, createWebHashHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import store from '@/store/index.js'
 const routes = [
@@ -117,6 +117,9 @@ const routes = [
   {
     path: '/artistDetail',
     name: 'ArtistDetail',
+    meta: {
+      showFooterMusic: true
+    },
     component: () => import(/* webpackChunkName: "artistDetail" */ '../views/ArtistDetail.vue')
   },
   {

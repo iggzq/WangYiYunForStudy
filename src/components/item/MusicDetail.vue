@@ -11,18 +11,16 @@
         </svg>
         <div class="leftMarquee">
           <Vue3Marquee style="color: #fff">{{ musicList.name }}</Vue3Marquee>
-          <span v-for="item in musicList.ar" :key="item">
-            <div class="van-ellipsis">{{ item.name }}</div>
-            <svg class="icon" aria-hidden="true">
-              <use xlink:href="#icon-fanhui"></use>
+          <div class="rightBottom" style="display: flex; align-items: center">
+            <span v-for="item in musicList.ar" :key="item">
+              <!-- <div class="van-ellipsis">{{ item.name }}</div> -->
+              <div>{{ item.name }}</div>
+            </span>
+            <svg class="icon" aria-hidden="true" @click="goToArtistDetail">
+              <use xlink:href="#icon-youjiantou"></use>
             </svg>
-          </span>
+          </div>
         </div>
-      </div>
-      <div class="detailRight">
-        <svg class="icon" aria-hidden="true">
-          <use xlink:href="#icon-fenxiang"></use>
-        </svg>
       </div>
     </div>
     <div
@@ -111,7 +109,7 @@
           >
             <div
               class="itemList"
-              style="width: 7rem; height: 50vh; overflow-y: auto"
+              style="width: 7rem; height: 50vh; overflow-y: auto; display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start;"
             >
               <div
                 class="item"
@@ -119,6 +117,7 @@
                 :key="i"
                 style="
                   width: 7rem;
+                  height: 0.5rem;
                   display: flex;
                   justify-content: space-between;
                   align-items: center;
@@ -144,14 +143,11 @@
                   >
                     <use xlink:href="#icon-a-24gl-playSquare"></use>
                   </svg>
-                  <svg class="icon liebiao" aria-hidden="true">
-                    <use xlink:href="#icon-a-31liebiao"></use>
-                  </svg>
                 </div>
               </div>
             </div>
             <template #reference>
-              <svg class="icon" aria-hidden="true" style="fill: black;">
+              <svg class="icon" aria-hidden="true" style="fill: black">
                 <use xlink:href="#icon-a-31liebiao"></use>
               </svg>
             </template>
@@ -187,11 +183,14 @@
         <svg class="bofang" aria-hidden="true" v-else @click.stop="play">
           <use xlink:href="#icon-zanting"></use>
         </svg>
-        <svg class="icon" aria-hidden="true" @click.stop="goPlay(1)">
+        <svg class="icon" aria-hidden="true" @click.stop="goPlay(1)" style="fill: black;">
           <use xlink:href="#icon-a-49xiayishou"></use>
         </svg>
-        <svg class="icon" aria-hidden="true">
+        <svg class="icon" aria-hidden="true" @click="changeModel('xunhuan')" v-if="modelChoice == 'xunhuan'">
           <use xlink:href="#icon-danquxunhuan"></use>
+        </svg>
+        <svg class="icon" aria-hidden="true" @click="changeModel('suiji')" v-if="modelChoice == 'suiji'">
+          <use xlink:href="#icon-suijibofang"></use>
         </svg>
       </div>
     </div>
@@ -237,6 +236,7 @@ export default {
       showComment: false,
       musicComments: [],
       nowCurrentTime: null,
+      modelChoice: "xunhuan",
     };
   },
   methods: {
@@ -293,13 +293,31 @@ export default {
 
       console.log(this.musicComments);
     },
+    goToArtistDetail: function () {
+      this.$router.push({
+        path: "/artistDetail",
+        query: {
+          artist: JSON.stringify(this.playList[this.playListIndex].ar[0]),
+        },
+      });
+      this.$emit("close-popup");
+    },
+    changeModel: function(data){
+      if(data == 'xunhuan'){
+        this.modelChoice = 'suiji';
+      }else{
+        this.modelChoice = 'xunhuan';
+      }
+
+
+    },
 
     ...mapMutations([
       "updateAllPlayList",
       "updatePlayList",
       "updatePlayIndex",
       "updatePlayListIndex",
-      "updateCurrentTime"
+      "updateCurrentTime",
     ]),
   },
   watch: {
@@ -318,9 +336,9 @@ export default {
         }
       }
     },
-    nowCurrentTime: function(newValue){
+    nowCurrentTime: function (newValue) {
       this.updateCurrentTime(newValue);
-    }
+    },
   },
   computed: {
     ...mapState(["playListIndex", "playList", "duration", "currentTime"]),
@@ -332,7 +350,7 @@ export default {
           let min = item.slice(1, 3);
           let sec = item.slice(4, 6);
           let mill = item.slice(item.indexOf(".") + 1, item.indexOf("]"));
-           let lrc = item.slice(11, item.length);
+          let lrc = item.slice(11, item.length);
           let time =
             parseInt(min) * 60 * 1000 + parseInt(sec) * 1000 + parseInt(mill);
           return { min, sec, mill, lrc, time };
@@ -368,7 +386,7 @@ export default {
     display: flex;
     align-items: center;
     .leftMarquee {
-      width: 3rem;
+      width: 2rem;
       height: 100%;
       margin-left: 0.4rem;
       span {
@@ -483,7 +501,7 @@ export default {
     .tanChu {
       width: 80vw;
       .liebiao {
-        svg{
+        svg {
           fill: black;
         }
         .itemList {
@@ -494,7 +512,8 @@ export default {
             // top: 40%;
             display: flex;
             justify-content: space-between;
-            align-items: center;
+
+            // flex-direction: column;
             .itemLeft {
               width: 70%;
               height: 100%;
@@ -542,11 +561,10 @@ export default {
     align-items: center;
     .icon {
       //   fill: rgb(245, 234, 234);
-      fill: #999;
-      color: #999;
-      border-color: #999;
+      fill: black;
     }
     .bofang {
+      fill: black;
       width: 1rem;
       height: 1rem;
     }
@@ -637,6 +655,5 @@ export default {
 
 div {
   font-family: "SmileySans"; //使用字体
-  
 }
 </style>

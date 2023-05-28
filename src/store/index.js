@@ -10,9 +10,8 @@ export default createStore({
         "tns": [],
         "pic_str": "85761906967212",
         "pic": 85761906967212,
-
       },
-      ar: [{ name: '郭顶' }],
+      ar: [{ name: '郭顶',id: '2843'}],
       id: 85571,
       name: '我们俩',
     }],

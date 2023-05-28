@@ -20,6 +20,7 @@
         </van-overlay>
       </div>
       <img :src="playlist.coverImgUrl" alt="" class="bgimg" />
+      
       <div class="itemLeft">
         <svg class="icon" aria-hidden="true" @click="$router.go(-1)">
           <use xlink:href="#icon-fanhui"></use>
